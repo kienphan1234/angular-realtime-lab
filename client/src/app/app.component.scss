@@ -74,3 +74,37 @@ h2 {
 .body{
   padding: 40px;
 }
+
+.message-area {
+  height: 400px;
+  display: flex;
+  flex-direction: column; /* Sắp xếp theo cột từ trên xuống */
+  gap: 10px;
+  padding: 15px;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.bubble {
+  max-width: 80%;
+  padding: 8px 15px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Tin nhắn của Client (Người dùng) - Nằm bên TRÁI */
+.left {
+  background-color: #e4e6eb; /* Màu xám nhạt */
+  color: #050505;
+  align-self: flex-start; /* Đẩy sang trái */
+  border-bottom-left-radius: 4px;
+}
+
+/* Tin nhắn của Server - Nằm bên PHẢI */
+.right {
+  background-color: #0084ff; /* Màu xanh Messenger */
+  color: white;
+  align-self: flex-end; /* Đẩy sang phải */
+  border-bottom-right-radius: 4px;
+}

@@ -10,13 +10,13 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 })
 export class AppComponent implements OnInit {
   private socket!: WebSocket;
-  messages: string[] = [];
+  messages: any[] = [];
   isConnected = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object // Tiêm ID nền tảng vào đây
-  ) {}
+  ) { }
 
   ngOnInit() {
     // CHỈ CHẠY NẾU LÀ TRÌNH DUYỆT
@@ -30,8 +30,13 @@ export class AppComponent implements OnInit {
       };
 
       this.socket.onmessage = (event) => {
-        console.log('Raw data from server:', event.data);
-        this.messages = [...this.messages, event.data];
+        try {
+          const data = JSON.parse(event.data); // Nhận { text: "...", isServer: true }
+          this.messages.push(data);
+        } catch (e) {
+          // Phòng hờ nếu client khác gửi text thuần không phải JSON
+          this.messages.push({ text: event.data, isServer: false });
+        }
         this.cdr.detectChanges();
       };
 

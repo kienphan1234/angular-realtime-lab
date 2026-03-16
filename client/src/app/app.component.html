@@ -7,12 +7,17 @@
     </div>
 
     <div class="message-area">
-      <div *ngFor="let m of messages" class="bubble">{{ m }}</div>
+      <div *ngFor="let m of messages"
+           class="bubble"
+           [ngClass]="!m.isServer ? 'right' : 'left'">
+        {{ m.text }}
+      </div>
     </div>
 
     <div class="input-box">
       <input #box (keyup.enter)="send(box.value); box.value=''" placeholder="Nhập nội dung...">
       <button (click)="send(box.value); box.value=''">Gửi</button>
     </div>
+
   </div>
 </div>
