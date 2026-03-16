@@ -1,12 +1,52 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'client';
+export class AppComponent implements OnInit {
+  private socket!: WebSocket;
+  messages: string[] = [];
+  isConnected = false;
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object // Tiêm ID nền tảng vào đây
+  ) {}
+
+  ngOnInit() {
+    // CHỈ CHẠY NẾU LÀ TRÌNH DUYỆT
+    if (isPlatformBrowser(this.platformId)) {
+      this.socket = new WebSocket('ws://localhost:3000');
+
+      this.socket.onopen = () => {
+        this.isConnected = true;
+        this.cdr.detectChanges();
+        console.log('✅ Connected to Server');
+      };
+
+      this.socket.onmessage = (event) => {
+        console.log('Raw data from server:', event.data);
+        this.messages = [...this.messages, event.data];
+        this.cdr.detectChanges();
+      };
+
+      this.socket.onclose = () => {
+        this.isConnected = false;
+        this.cdr.detectChanges();
+        console.log('❌ Disconnected');
+      };
+    }
+  }
+
+  send(msg: string) {
+    // Kiểm tra socket tồn tại trước khi gửi
+    if (this.socket && msg.trim() && this.isConnected) {
+      this.socket.send(msg);
+    }
+  }
 }
